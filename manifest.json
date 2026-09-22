@@ -1,15 +1,17 @@
 {
-  "name": "Chat Kamar Mhmd",
-  "short_name": "Chat",
-  "start_url": "./",
+  "name": "Chat Love K.M.R - شات الحب",
+  "short_name": "Chat Love",
+  "description": "Chat love - دردشة و تعارف، 18+",
+  "start_url": ".",
   "display": "standalone",
-  "background_color": "#ff4d6d",
-  "theme_color": "#ff4d6d",
+  "background_color": "#0a0a0f",
+  "theme_color": "#ff2a6d",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/833/833472.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
