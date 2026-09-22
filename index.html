@@ -1,57 +1,143 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KMR ❤ MHMD Chat</title>
-<meta name="theme-color" content="#ff006a">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K.M.R ❤️ M.H.M.D</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="IMG-20260922-WA0550.jpg">
+<link rel="apple-touch-icon" href="IMG-20260922-WA0550.jpg">
+<meta name="theme-color" content="#ff2a6d">
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:sans-serif;background:#fff0f5;display:flex;flex-direction:column;height:100vh}
-header{background:#ff006a;color:white;padding:15px;text-align:center;font-weight:bold;font-size:20px;letter-spacing:2px}
-#chat{flex:1;overflow:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
-.m{max-width:75%;padding:10px 14px;border-radius:18px;word-break:break-word}
-.me{align-self:flex-end;background:#ff006a;color:white;border-bottom-right-radius:4px}
-.you{align-self:flex-start;background:white;box-shadow:0 1px 3px #0002;border-bottom-left-radius:4px}
-#bar{display:flex;padding:10px;background:white;gap:8px;border-top:1px solid #ffd1dc}
-input{flex:1;padding:12px;border-radius:25px;border:1px solid #ffb6c1;outline:none}
-button{padding:12px 18px;border-radius:25px;border:none;background:#ff006a;color:white;font-weight:bold}
-small{color:#888;font-size:11px;margin-top:2px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family: -apple-system, sans-serif;
+  background: linear-gradient(135deg, #ffe6ea 0%, #ffc2d1 100%);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
+}
+.header{
+  text-align:center;
+  margin:20px 0;
+}
+.header h1{
+  font-size:28px;
+  color:#ff2a6d;
+}
+.header p{
+  color:#ff5c8a;
+  margin-top:5px;
+}
+.chat-box{
+  width:100%;
+  max-width:400px;
+  height:60vh;
+  background:white;
+  border-radius:25px;
+  padding:15px;
+  overflow-y:auto;
+  box-shadow:0 10px 30px rgba(255,42,109,0.2);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.msg{
+  padding:10px 15px;
+  border-radius:18px;
+  max-width:80%;
+  word-break:break-word;
+}
+.me{
+  background:#ff2a6d;
+  color:white;
+  align-self:flex-end;
+  border-bottom-right-radius:5px;
+}
+.him{
+  background:#ffe6ea;
+  color:#ff2a6d;
+  align-self:flex-start;
+  border-bottom-left-radius:5px;
+}
+.input-area{
+  width:100%;
+  max-width:400px;
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+.input-area input{
+  flex:1;
+  padding:14px 18px;
+  border-radius:25px;
+  border:2px solid #ffc2d1;
+  outline:none;
+  font-size:16px;
+}
+.input-area button{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  border:none;
+  background:#ff2a6d;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+}
+.icon-preview{
+  width:80px;
+  height:80px;
+  border-radius:20px;
+  margin:10px auto;
+  display:block;
+  box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
 </style>
 </head>
 <body>
-<header>K.M.R ❤ M.H.M.D</header>
-<div id="chat"></div>
-<div id="bar">
-<input id="msg" placeholder="كتبي هنا...">
-<button onclick="send()">Send ❤</button>
+
+<div class="header">
+  <img src="IMG-20260922-WA0550.jpg" class="icon-preview">
+  <h1>K.M.R ❤️ M.H.M.D</h1>
+  <p>دردشة حبنا الخاص ❤️</p>
 </div>
+
+<div class="chat-box" id="chatBox">
+  <div class="msg him">مرحبا حبيبي ❤️</div>
+  <div class="msg me">مرحبا حبيبتي 😍</div>
+</div>
+
+<div class="input-area">
+  <input type="text" id="msgInput" placeholder="كتبي رسالة...">
+  <button onclick="sendMsg()">❤️</button>
+</div>
+
 <script>
-let name=prompt("سميتك؟ KMR ولا MHMD")||"KMR";
-let chatDiv=document.getElementById('chat');
-let msgs=JSON.parse(localStorage.getItem('loveChat')||'[]');
-function render(){
-chatDiv.innerHTML='';
-msgs.forEach(m=>{
-let d=document.createElement('div');
-d.className='m '+(m.n==name?'me':'you');
-d.innerHTML=`<b>${m.n}</b><br>${m.t}<br><small>${m.time}</small>`;
-chatDiv.appendChild(d);
+function sendMsg(){
+  let input = document.getElementById('msgInput');
+  let box = document.getElementById('chatBox');
+  if(input.value.trim() === '') return;
+  let div = document.createElement('div');
+  div.className = 'msg me';
+  div.textContent = input.value;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  input.value = '';
+  setTimeout(()=>{
+    let reply = document.createElement('div');
+    reply.className = 'msg him';
+    reply.textContent = 'توصلت برسالتك ❤️';
+    box.appendChild(reply);
+    box.scrollTop = box.scrollHeight;
+  },1000);
+}
+document.getElementById('msgInput').addEventListener('keypress', function(e){
+  if(e.key === 'Enter') sendMsg();
 });
-chatDiv.scrollTop=chatDiv.scrollHeight;
-}
-function send(){
-let input=document.getElementById('msg');
-let text=input.value.trim();
-if(!text)return;
-let time=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-msgs.push({n:name,t:text,time:time});
-localStorage.setItem('loveChat',JSON.stringify(msgs));
-input.value='';
-render();
-}
-document.getElementById('msg').addEventListener('keydown',e=>{if(e.key==='Enter')send()});
-render();
 </script>
+
 </body>
 </html>
