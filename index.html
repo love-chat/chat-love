@@ -2,33 +2,56 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KMR MHMD Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KMR ❤ MHMD Chat</title>
 <meta name="theme-color" content="#ff006a">
 <style>
-body{margin:0;font-family:sans-serif;display:flex;flex-direction:column;height:100dvh;background:#111;color:#fff}
-header{background:#ff006a;padding:15px;text-align:center;font-weight:bold}
+*{box-sizing:border-box}
+body{margin:0;font-family:sans-serif;background:#fff0f5;display:flex;flex-direction:column;height:100vh}
+header{background:#ff006a;color:white;padding:15px;text-align:center;font-weight:bold;font-size:20px;letter-spacing:2px}
 #chat{flex:1;overflow:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
-.m{max-width:75%;padding:10px 14px;border-radius:15px}
-.me{align-self:flex-end;background:#ff006a}
-.you{align-self:flex-start;background:#222}
-#bar{display:flex;padding:10px;background:#000;gap:8px}
-input{flex:1;padding:12px;border-radius:25px;border:none;background:#222;color:#fff}
-button{padding:12px 18px;border-radius:25px;border:none;background:#ff006a;color:#fff;font-weight:bold}
+.m{max-width:75%;padding:10px 14px;border-radius:18px;word-break:break-word}
+.me{align-self:flex-end;background:#ff006a;color:white;border-bottom-right-radius:4px}
+.you{align-self:flex-start;background:white;box-shadow:0 1px 3px #0002;border-bottom-left-radius:4px}
+#bar{display:flex;padding:10px;background:white;gap:8px;border-top:1px solid #ffd1dc}
+input{flex:1;padding:12px;border-radius:25px;border:1px solid #ffb6c1;outline:none}
+button{padding:12px 18px;border-radius:25px;border:none;background:#ff006a;color:white;font-weight:bold}
+small{color:#888;font-size:11px;margin-top:2px}
 </style>
 </head>
 <body>
 <header>K.M.R ❤ M.H.M.D</header>
 <div id="chat"></div>
 <div id="bar">
-<input id="t" placeholder="كتبي هنا...">
-<button onclick="send()">Send</button>
+<input id="msg" placeholder="كتبي هنا...">
+<button onclick="send()">Send ❤</button>
 </div>
 <script>
-let a=JSON.parse(localStorage.getItem("c")||"[]");
-function show(){let c=document.getElementById("chat");c.innerHTML="";a.forEach(m=>{let d=document.createElement("div");d.className="m "+(m.me?"me":"you");d.textContent=m.t;c.appendChild(d)});c.scrollTop=c.scrollHeight}
-function send(){let i=document.getElementById("t");if(!i.value)return;a.push({t:i.value,me:true});localStorage.setItem("c",JSON.stringify(a));i.value="";show()}
-show();
+let name=prompt("سميتك؟ KMR ولا MHMD")||"KMR";
+let chatDiv=document.getElementById('chat');
+let msgs=JSON.parse(localStorage.getItem('loveChat')||'[]');
+function render(){
+chatDiv.innerHTML='';
+msgs.forEach(m=>{
+let d=document.createElement('div');
+d.className='m '+(m.n==name?'me':'you');
+d.innerHTML=`<b>${m.n}</b><br>${m.t}<br><small>${m.time}</small>`;
+chatDiv.appendChild(d);
+});
+chatDiv.scrollTop=chatDiv.scrollHeight;
+}
+function send(){
+let input=document.getElementById('msg');
+let text=input.value.trim();
+if(!text)return;
+let time=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+msgs.push({n:name,t:text,time:time});
+localStorage.setItem('loveChat',JSON.stringify(msgs));
+input.value='';
+render();
+}
+document.getElementById('msg').addEventListener('keydown',e=>{if(e.key==='Enter')send()});
+render();
 </script>
 </body>
 </html>
