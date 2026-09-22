@@ -4,18 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>KMR MHMD Chat</title>
-  <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ff006a">
 <style>
-body{margin:0;font-family:sans-serif;background:#111;color:#fff;display:flex;flex-direction:column;height:100vh}
+body{margin:0;font-family:sans-serif;display:flex;flex-direction:column;height:100dvh;background:#111;color:#fff}
 header{background:#ff006a;padding:15px;text-align:center;font-weight:bold}
 #chat{flex:1;overflow:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
 .m{max-width:75%;padding:10px 14px;border-radius:15px}
 .me{align-self:flex-end;background:#ff006a}
-.you{align-self:flex-start;background:#333}
+.you{align-self:flex-start;background:#222}
 #bar{display:flex;padding:10px;background:#000;gap:8px}
-input{flex:1;padding:12px;border-radius:20px;border:none;background:#222;color:#fff}
-button{padding:12px 18px;border-radius:20px;border:none;background:#ff006a;color:#fff}
+input{flex:1;padding:12px;border-radius:25px;border:none;background:#222;color:#fff}
+button{padding:12px 18px;border-radius:25px;border:none;background:#ff006a;color:#fff;font-weight:bold}
 </style>
 </head>
 <body>
@@ -26,9 +25,9 @@ button{padding:12px 18px;border-radius:20px;border:none;background:#ff006a;color
 <button onclick="send()">Send</button>
 </div>
 <script>
-let a=JSON.parse(localStorage.getItem('c')||'[]');
-function show(){let c=document.getElementById('chat');c.innerHTML='';a.forEach(x=>{let d=document.createElement('div');d.className='m '+(x.m?'me':'you');d.textContent=x.t;c.appendChild(d)});c.scrollTop=9999}
-function send(){let i=document.getElementById('t');if(!i.value)return;a.push({t:i.value,m:true});localStorage.setItem('c',JSON.stringify(a));i.value='';show()}
+let a=JSON.parse(localStorage.getItem("c")||"[]");
+function show(){let c=document.getElementById("chat");c.innerHTML="";a.forEach(m=>{let d=document.createElement("div");d.className="m "+(m.me?"me":"you");d.textContent=m.t;c.appendChild(d)});c.scrollTop=c.scrollHeight}
+function send(){let i=document.getElementById("t");if(!i.value)return;a.push({t:i.value,me:true});localStorage.setItem("c",JSON.stringify(a));i.value="";show()}
 show();
 </script>
 </body>
