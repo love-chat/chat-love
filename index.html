@@ -1,171 +1,45 @@
 <!DOCTYPE html>
-<html dir="rtl">
+<html dir="rtl" lang="ar">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chat-Love ❤️ - جروب و بريفي</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>الأشخاص القريب منك</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <style>
-body{font-family:system-ui;background:#fff0f5;margin:0;display:flex;height:100vh}
-#left{width:35%;background:#fff;border-left:2px solid #ff2a6d;display:flex;flex-direction:column}
-#right{width:65%;display:flex;flex-direction:column;padding:10px}
-#topLeft{padding:12px;background:#ff2a6d;color:#fff;text-align:center;font-weight:bold}
-#userList{flex:1;overflow:auto}
-.user{padding:12px;border-bottom:1px solid #ffe0ea;cursor:pointer}
-.user:hover{background:#fff0f5}
-.user.active{background:#ff2a6d;color:#fff}
-#box{background:#fff;height:100%;overflow:auto;padding:10px;border-radius:10px;border:1px solid #ffd0de;flex:1}
-.msg{padding:8px;border-bottom:1px solid #f5f5f5}
-.msg.me{background:#ffe4ec;border-radius:10px}
-#tabs{display:flex;gap:5px;margin-bottom:10px}
-.tab{flex:1;padding:10px;text-align:center;border-radius:10px;background:#fff;border:1px solid #ff2a6d;cursor:pointer;font-weight:bold}
-.tab.active{background:#ff2a6d;color:#fff}
-input{width:100%;padding:12px;margin:5px 0;border-radius:10px;border:1px solid #ccc;box-sizing:border-box}
-button{background:#ff2a6d;color:#fff;border:0;padding:12px 20px;border-radius:10px;font-weight:bold;cursor:pointer;width:100%}
-#sendRow{display:flex;gap:5px;margin-top:10px}
-#sendRow input{flex:1}
-#sendRow button{width:90px}
-</style>
-</head>
-<body>
+*{box-sizing:border-box;font-family:Tahoma,Arial}
+body{margin:0;background:#00d1b2}
+.phone{max-width:420px;margin:0 auto;background:#fff;min-height:100vh;position:relative;box-shadow:0 0 20px rgba(0,0,0,0.3)}
+.top{height:35px;background:#111;display:flex;align-items:center;padding:0 10px;color:#fff;font-size:13px;justify-content:space-between}
+.top span{opacity:0.9}
+.header{background:#5bc5bf;color:#fff;padding:12px 10px;display:flex;align-items:center;gap:10px}
+.header h3{flex:1;margin:0;text-align:center;font-size:17px;font-weight:normal}
+.header i{font-style:normal;font-size:22px;cursor:pointer}
+.search-bar{background:#5bc5bf;padding:0 10px 10px;display:flex;align-items:center}
+.search-bar input{flex:1;background:rgba(255,255,255,0.25);border:0;padding:8px 12px;border-radius:4px;color:#fff}
+.search-bar input::placeholder{color:#fff}
+.tabs{display:flex;background:#fff;border-bottom:1px solid #eee;font-size:14px}
+.tabs div{flex:1;text-align:center;padding:12px 2px;color:#888;position:relative}
+.tabs div.active{color:#5bc5bf;border-bottom:3px solid #5bc5bf}
+.tabs .badge{background:#ff3b30;color:#fff;border-radius:50%;padding:1px 6px;font-size:11px;position:absolute;top:6px;margin-right:3px}
+.user-row{display:flex;align-items:center;padding:12px 10px;background:#fff;border-bottom:1px solid #f5f5f5;cursor:pointer}
+.user-row:active{background:#f9f9f9}
+.user-row img{width:52px;height:52px;border-radius:50%;object-fit:cover;margin-left:10px}
+.user-row .mid{flex:1}
+.user-row .name{font-weight:bold;font-size:14px;color:#333}
+.user-row .name span{font-weight:normal;background:#e0f7f6;color:#5bc5bf;font-size:11px;padding:2px 7px;border-radius:12px;margin-right:5px}
+.user-row .msg{font-size:12px;color:#999;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.user-row .left{font-size:11px;color:#aaa;text-align:left;line-height:1.6}
+#login{position:fixed;inset:0;background:#5bc5bf;z-index:100;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;width:85%;max-width:320px;padding:20px;border-radius:12px}
+.login-box h2{text-align:center;color:#5bc5bf;margin:0 0 15px}
+.login-box input{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px}
+.login-box button{width:100%;padding:12px;background:#5bc5bf;color:#fff;border:0;border-radius:8px;font-weight:bold;margin-top:10px;font-size:16px}
 
-<div id="left">
-<div id="topLeft">الناس أونلاين 🟢</div>
-<div id="userList">كاينين غير نتا دابا...</div>
-</div>
-
-<div id="right">
-<h2 style="margin:5px 0;text-align:center">Chat-Love ❤️</h2>
-<input id="myName" placeholder="سميتك - مثلا Ahmed 24">
-<div id="tabs">
-<div class="tab active" id="tabGroup" onclick="switchMode('group')">💬 الجروب العام</div>
-<div class="tab" id="tabPrivate" onclick="switchMode('private')">🔒 البريفي</div>
-</div>
-<div id="chatTitle" style="font-weight:bold;margin:5px 0;">الجروب العام - كولشي كيهضر هنا</div>
-<div id="box"></div>
-<div id="sendRow">
-<input id="txt" placeholder="كتب رسالة...">
-<button onclick="send()">سيفط</button>
-</div>
-</div>
-
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBdPT-VStQgY6HfOwaa9w4AT1HlGmYfaso",
-  authDomain: "chat-love-14788.firebaseapp.com",
-  projectId: "chat-love-14788",
-  storageBucket: "chat-love-14788.firebasestorage.app",
-  messagingSenderId: "663137842500",
-  appId: "1:663137842500:web:d11aa94ec2704cbe271311"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-let mode = "group";
-let selectedUser = null;
-let myNameCache = "";
-
-document.getElementById("myName").addEventListener("input",()=>{
-  myNameCache = document.getElementById("myName").value.trim();
-  if(myNameCache){
-    db.collection("online").doc(myNameCache).set({name:myNameCache,time:Date.now()});
-  }
-});
-
-function switchMode(m){
-  mode=m;
-  document.getElementById("tabGroup").classList.toggle("active",m==="group");
-  document.getElementById("tabPrivate").classList.toggle("active",m==="private");
-  if(m==="group"){
-    document.getElementById("chatTitle").textContent="الجروب العام - كولشي كيهضر هنا";
-    listenGroup();
-  }else{
-    if(!selectedUser){
-      document.getElementById("chatTitle").textContent="ختار شي واحد من الليست باش تهضر بريفي";
-      document.getElementById("box").innerHTML="<div style='padding:20px;text-align:center;color:#999'>ورك على سميت شي واحد فالليست على اليسار باش تبدا تهضر معاه بريفي</div>";
-    }else{
-      document.getElementById("chatTitle").textContent="بريفي مع "+selectedUser;
-      listenPrivate();
-    }
-  }
-}
-
-function send(){
-  let t=document.getElementById('txt').value.trim();
-  let n=document.getElementById('myName').value.trim()||"مجهول";
-  if(!t) return;
-  myNameCache=n;
-  db.collection("online").doc(n).set({name:n,time:Date.now()});
-  
-  if(mode==="group"){
-    db.collection("chat").add({name:n,text:t,time:Date.now()});
-  }else{
-    if(!selectedUser) return alert("ختار شكون بغيتي تهضر معاه من الليست!");
-    db.collection("private").add({from:n,to:selectedUser,text:t,time:Date.now()});
-  }
-  document.getElementById('txt').value="";
-}
-
-function listenGroup(){
-  db.collection("chat").orderBy("time").onSnapshot(s=>{
-    if(mode!=="group") return;
-    let h="";
-    s.forEach(d=>{
-      let m=d.data();
-      let isMe = m.name===myNameCache;
-      h+=`<div class="msg ${isMe?'me':''}"><b>${m.name}:</b> ${m.text}</div>`;
-    });
-    let box=document.getElementById('box');
-    box.innerHTML=h;
-    box.scrollTop=box.scrollHeight;
-  });
-}
-
-function listenPrivate(){
-  db.collection("private").orderBy("time").onSnapshot(s=>{
-    if(mode!=="private" || !selectedUser) return;
-    let h="";
-    s.forEach(d=>{
-      let m=d.data();
-      if((m.from===myNameCache && m.to===selectedUser) || (m.from===selectedUser && m.to===myNameCache)){
-        let isMe = m.from===myNameCache;
-        h+=`<div class="msg ${isMe?'me':''}"><b>${m.from}:</b> ${m.text}</div>`;
-      }
-    });
-    let box=document.getElementById('box');
-    box.innerHTML=h||"<div style='padding:20px;text-align:center;color:#999'>بدا الهضرة مع "+selectedUser+"</div>";
-    box.scrollTop=box.scrollHeight;
-  });
-}
-
-// Online users
-db.collection("online").onSnapshot(s=>{
-  let html="";
-  let count=0;
-  s.forEach(d=>{
-    let u=d.data();
-    if(u.name && u.name!==myNameCache){
-      count++;
-      html+=`<div class="user ${u.name===selectedUser?'active':''}" onclick="selectUser('${u.name}')">${u.name} 🟢</div>`;
-    }
-  });
-  if(count===0) html="<div style='padding:15px;color:#999'>ما كاين حد دابا...</div>";
-  document.getElementById("userList").innerHTML=html;
-});
-
-window.selectUser=(name)=>{
-  selectedUser=name;
-  mode="private";
-  document.getElementById("tabGroup").classList.remove("active");
-  document.getElementById("tabPrivate").classList.add("active");
-  document.getElementById("chatTitle").textContent="بريفي مع "+name;
-  listenPrivate();
-  // update active class
-  document.querySelectorAll(".user").forEach(el=>el.classList.remove("active"));
-}
-
-listenGroup();
-</script>
-</body>
-</html>
+/* CHAT VIEW */
+#chatPage{display:none;flex-direction:column;height:100vh}
+#chatPage .header{justify-content:space-between}
+.chat-area{flex:1;background:#fff;padding:10px;overflow:auto}
+.bubble{display:flex;gap:7px;margin:10px 0;align-items:flex-end}
+.bubble.me{flex-direction:row-reverse}
+.bubble img{width
