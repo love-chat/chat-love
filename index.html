@@ -1,55 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html dir="rtl" lang="ar">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Love Chat - حقيقي</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Love Chat - كروب و بريفي</title>
 <style>
-body{font-family:Arial;background:#fff0f5;padding:15px;margin:0}
-.card{background:#fff;padding:15px;border-radius:15px;margin:10px 0;box-shadow:0 2px 5px #0002}
-input,button{width:100%;padding:13px;margin:6px 0;border-radius:10px;border:1px solid #ddd;box-sizing:border-box}
-button{background:#ff2a6d;color:#fff;border:0;font-weight:bold;font-size:16px}
+body{font-family:system-ui;background:#fff0f5;margin:0;padding:10px}
+.card{background:#fff;padding:12px;border-radius:12px;margin:8px 0;box-shadow:0 2px 6px #0001}
+input,button{width:100%;padding:12px;margin:5px 0;border-radius:10px;border:1px solid #ddd;box-sizing:border-box}
+button{background:#ff2a6d;color:#fff;border:0;font-weight:bold}
+.tabs{display:flex;gap:5px} .tabs button{background:#ddd;color:#000} .tabs button.active{background:#ff2a6d;color:#fff}
+.msg{padding:8px 10px;margin:5px 0;background:#ffe4ec;border-radius:10px}
+#chatBox{height:300px;overflow:auto;background:#fff;border-radius:12px;padding:10px}
 </style>
 </head>
 <body>
-<h2>❤️ Love Chat - تعارف حقيقي</h2>
-<div class="card">
-<input id="name" placeholder="سميتك">
-<input id="city" placeholder="مدينتك - مراكش">
-<input id="age" placeholder="السن">
-<button id="btn">سجل دابا و بان للناس</button>
+<h2>❤️ Love Chat</h2>
+<div class="card" id="loginBox">
+<input id="myName" placeholder="سميتك">
+<button id="loginBtn">دخل</button>
 </div>
-<div id="list"></div>
+
+<div id="app" style="display:none">
+<div class="tabs">
+<button id="tabGroup" class="active" onclick="openTab('group')">كروب عام</button>
+<button id="tabUsers" onclick="openTab('users')">ناس - بريفي</button>
+</div>
+
+<div id="groupTab">
+<div id="chatBox"></div>
+<div style="display:flex;gap:5px"><input id="gMsg" placeholder="كتب رسالة..."><button onclick="sendGroup()" style="width:80px">سيفط</button></div>
+</div>
+
+<div id="usersTab" style="display:none">
+<div id="usersList"></div>
+<div id="privateArea" style="display:none">
+<h4 id="chatWith"></h4>
+<div id="pChatBox" style="height:250px;overflow:auto;background:#fff;border-radius:12px;padding:10px"></div>
+<div style="display:flex;gap:5px"><input id="pMsg" placeholder="رسالة بريفي..."><button onclick="sendPrivate()" style="width:80px">سيفط</button></div>
+</div>
+</div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDemo-1234567890",
-  authDomain: "love-chat-demo.firebaseapp.com",
-  projectId: "love-chat-demo",
+  apiKey: "AIzaSyC2fZJ5sX8kDemoKey-ReplaceWithYours",
+  authDomain: "love-chat-marrakech.firebaseapp.com",
+  projectId: "love-chat-marrakech",
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.getElementById('btn').onclick = async () => {
-  const name = document.getElementById('name').value;
-  const city = document.getElementById('city').value;
-  const age = document.getElementById('age').value;
-  if(!name) return alert('كتب سميتك');
-  await addDoc(collection(db, "users"), {name, city, age, time: Date.now()});
-  alert('تسجلتي! دابا كلشي كيشوفك');
+let me = ""; let privateTo = "";
+window.openTab = (t)=>{
+  document.getElementById('groupTab').style.display = t=='group'?'block':'none';
+  document.getElementById('usersTab').style.display = t=='users'?'block':'none';
+  document.getElementById('tabGroup').className = t=='group'?'active':'';
+  document.getElementById('tabUsers').className = t=='users'?'active':'';
+}
+
+document.getElementById('loginBtn').onclick = async ()=>{
+  me = document.getElementById('myName').value.trim();
+  if(!me) return alert('كتب سميتك');
+  await addDoc(collection(db,"users"),{name:me, time:Date.now()});
+  document.getElementById('loginBox').style.display='none';
+  document.getElementById('app').style.display='block';
 };
 
-onSnapshot(collection(db, "users"), (snap)=>{
-  let html = '';
-  snap.forEach(d=>{
-    let u = d.data();
-    html += `<div class="card"><b>${u.name}</b> - ${u.city} - ${u.age} سنة <button onclick="alert('قريبا تقدر تهضر مع ${u.name}')">هضر معاه</button></div>`;
-  });
-  document.getElementById('list').innerHTML = html;
-});
-</script>
-</body>
-</html>
+window.sendGroup = async ()=>{
+  let txt = document.getElementById('gMsg').value; if(!txt) return;
+  await addDoc(collection(db,"group"),{from:me, text:txt, time:Date.now()});
+  document.getElementById('gMsg').value='';
+};
+onSnapshot(query(collection(db,"group"),orderBy("time")), snap=>{
+  let h=''; snap.forEach(d=>{ let m=d.data(); h+=`<div class
