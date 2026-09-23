@@ -1,45 +1,117 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>الأشخاص القريب منك</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chat Love</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <style>
-*{box-sizing:border-box;font-family:Tahoma,Arial}
-body{margin:0;background:#00d1b2}
-.phone{max-width:420px;margin:0 auto;background:#fff;min-height:100vh;position:relative;box-shadow:0 0 20px rgba(0,0,0,0.3)}
-.top{height:35px;background:#111;display:flex;align-items:center;padding:0 10px;color:#fff;font-size:13px;justify-content:space-between}
-.top span{opacity:0.9}
-.header{background:#5bc5bf;color:#fff;padding:12px 10px;display:flex;align-items:center;gap:10px}
-.header h3{flex:1;margin:0;text-align:center;font-size:17px;font-weight:normal}
-.header i{font-style:normal;font-size:22px;cursor:pointer}
-.search-bar{background:#5bc5bf;padding:0 10px 10px;display:flex;align-items:center}
-.search-bar input{flex:1;background:rgba(255,255,255,0.25);border:0;padding:8px 12px;border-radius:4px;color:#fff}
-.search-bar input::placeholder{color:#fff}
-.tabs{display:flex;background:#fff;border-bottom:1px solid #eee;font-size:14px}
-.tabs div{flex:1;text-align:center;padding:12px 2px;color:#888;position:relative}
-.tabs div.active{color:#5bc5bf;border-bottom:3px solid #5bc5bf}
-.tabs .badge{background:#ff3b30;color:#fff;border-radius:50%;padding:1px 6px;font-size:11px;position:absolute;top:6px;margin-right:3px}
-.user-row{display:flex;align-items:center;padding:12px 10px;background:#fff;border-bottom:1px solid #f5f5f5;cursor:pointer}
-.user-row:active{background:#f9f9f9}
-.user-row img{width:52px;height:52px;border-radius:50%;object-fit:cover;margin-left:10px}
-.user-row .mid{flex:1}
-.user-row .name{font-weight:bold;font-size:14px;color:#333}
-.user-row .name span{font-weight:normal;background:#e0f7f6;color:#5bc5bf;font-size:11px;padding:2px 7px;border-radius:12px;margin-right:5px}
-.user-row .msg{font-size:12px;color:#999;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
-.user-row .left{font-size:11px;color:#aaa;text-align:left;line-height:1.6}
-#login{position:fixed;inset:0;background:#5bc5bf;z-index:100;display:flex;align-items:center;justify-content:center}
-.login-box{background:#fff;width:85%;max-width:320px;padding:20px;border-radius:12px}
-.login-box h2{text-align:center;color:#5bc5bf;margin:0 0 15px}
-.login-box input{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px}
-.login-box button{width:100%;padding:12px;background:#5bc5bf;color:#fff;border:0;border-radius:8px;font-weight:bold;margin-top:10px;font-size:16px}
-
-/* CHAT VIEW */
+body{margin:0;font-family:Arial;background:#fff}
+#login{position:fixed;inset:0;background:#00d1b2;display:flex;align-items:center;justify-content:center;z-index:9999}
+.box{background:#fff;padding:20px;border-radius:12px;width:90%;max-width:320px}
+.box input{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box}
+.box button{width:100%;padding:12px;background:#00d1b2;color:#fff;border:0;border-radius:8px;font-weight:bold;font-size:16px}
+.header{background:#00d1b2;color:#fff;padding:14px;text-align:center;font-weight:bold}
+.user{padding:12px;border-bottom:1px solid #eee;display:flex;gap:10px;align-items:center}
+.user img{width:48px;height:48px;border-radius:50%}
 #chatPage{display:none;flex-direction:column;height:100vh}
-#chatPage .header{justify-content:space-between}
-.chat-area{flex:1;background:#fff;padding:10px;overflow:auto}
-.bubble{display:flex;gap:7px;margin:10px 0;align-items:flex-end}
-.bubble.me{flex-direction:row-reverse}
-.bubble img{width
+#msgs{flex:1;overflow:auto;padding:10px;background:#f0f0f0}
+.msg{padding:10px 14px;border-radius:15px;margin:6px 0;max-width:70%;display:inline-block}
+.me{background:#00d1b2;color:#fff;float:left;clear:both}
+.other{background:#fff;float:right;clear:both}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="box">
+    <h3 style="text-align:center;color:#00d1b2;margin:0 0 10px">Chat Love ❤️</h3>
+    <input id="n" placeholder="سميتك">
+    <input id="a" placeholder="العمر" type="number">
+    <input id="c" placeholder="المدينة">
+    <button onclick="enter()">دخول</button>
+    <p style="font-size:11px;color:#999;text-align:center;margin-top:10px">سيتم الحفظ وسيظهر لك الأشخاص المتصلين</p>
+  </div>
+</div>
+
+<div id="listPage">
+  <div class="header">الأشخاص القريب منك 🟢</div>
+  <div id="users" style="padding:20px;text-align:center;color:#999">جاري التحميل...</div>
+</div>
+
+<div id="chatPage">
+  <div class="header"><span onclick="back()" style="float:right;cursor:pointer">→ رجوع</span> <span id="chatName"></span></div>
+  <div id="msgs"></div>
+  <div style="padding:10px;display:flex;gap:6px;background:#fff"><input id="txt" style="flex:1;padding:11px;border-radius:20px;border:1px solid #ddd" placeholder="كتب رسالة..."><button onclick="send()" style="background:#00d1b2;color:#fff;border:0;padding:10px 18px;border-radius:20px">سيفط</button></div>
+</div>
+
+<script>
+// Firebase ديالك
+const firebaseConfig = {
+  apiKey: "AIzaSyBdPT-VStQgY6HfOwaa9w4AT1HlGmYfaso",
+  authDomain: "chat-love-14788.firebaseapp.com",
+  projectId: "chat-love-14788",
+  storageBucket: "chat-love-14788.firebasestorage.app",
+  messagingSenderId: "663137842500",
+  appId: "1:663137842500:web:d11aa94ec2704cbe271311"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let me=null, to=null;
+
+function enter(){
+ let name=document.getElementById("n").value.trim();
+ if(!name){alert("كتب سميتك"); return;}
+ me={name, age:document.getElementById("a").value||"20", city:document.getElementById("c").value||"المغرب"};
+ localStorage.setItem("me",JSON.stringify(me));
+ document.getElementById("login").style.display="none";
+ db.collection("online").doc(name).set({name:me.name, age:me.age, city:me.city, ts:Date.now()}).then(()=>{load();}).catch(e=>{alert("Firebase error: "+e.message); load();});
+}
+
+let saved=localStorage.getItem("me");
+if(saved){
+  me=JSON.parse(saved);
+  document.getElementById("login").style.display="none";
+  load();
+}
+
+function load(){
+ db.collection("online").onSnapshot(s=>{
+   let h="";
+   s.forEach(d=>{
+     let u=d.data();
+     if(u.name===me.name) return;
+     h+=`<div class="user" onclick="openChat('${u.name}')"><img src="https://i.pravatar.cc/100?u=${u.name}"><div><b>${u.name}</b> - ${u.age} سنة<br><small>${u.city}</small></div><small style="margin-right:auto;color:#00d1b2">متصل 🟢</small></div>`;
+   });
+   document.getElementById("users").innerHTML=h||"<div style='padding:30px'>ما كاين حد دابا<br>حل الموقع فتيليفون آخر بنفس الرابط<br><b>love-chat.github.io</b><br>وغادي يبان هنا</div>";
+ }, err=>{
+   document.getElementById("users").innerHTML="خطأ Firebase: "+err.message+"<br>سير لـ Firestore Rules ودير allow read,write";
+ });
+}
+
+function openChat(name){to=name; document.getElementById("listPage").style.display="none"; document.getElementById("chatPage").style.display="flex"; document.getElementById("chatName").textContent=name; listen();}
+function back(){document.getElementById("chatPage").style.display="none"; document.getElementById("listPage").style.display="block";}
+function listen(){
+ db.collection("private").orderBy("ts").onSnapshot(s=>{
+   let h="";
+   s.forEach(d=>{
+     let m=d.data();
+     if((m.from===me.name && m.to===to) || (m.from===to && m.to===me.name)){
+       let cls=m.from===me.name?"me":"other";
+       h+=`<div class="msg ${cls}">${m.text}</div>`;
+     }
+   });
+   let box=document.getElementById("msgs"); box.innerHTML=h; box.scrollTop=box.scrollHeight;
+ });
+}
+function send(){
+ let t=document.getElementById("txt").value.trim();
+ if(!t||!to) return;
+ db.collection("private").add({from:me.name,to:to,text:t,ts:Date.now()});
+ document.getElementById("txt").value="";
+}
+</script>
+</body>
+</html>
