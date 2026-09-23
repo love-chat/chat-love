@@ -1,1 +1,70 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chat Love</title><link rel="manifest" href="manifest.json"><style>@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&display=swap');*{margin:0;padding:0;box-sizing:border-box;font-family:Tajawal}body{background:#0a0a0f;color:#fff}.h{padding:15px 20px;display:flex;justify-content:space-between}.h h1{font-size:28px;font-weight:900}.st{padding:10px;display:flex;gap:10px;overflow:auto}.st .s{text-align:center;min-width:70px}.st .s .r{width:70px;height:70px;border-radius:50%;padding:3px;background:linear-gradient(45deg,#ff2a6d,#a259ff)}.st .s img{width:100%;height:100%;border-radius:50%;border:3px solid #0a0a0f}.chat{margin:10px;background:#1c1c22;border-radius:18px;padding:12px;display:flex;gap:10px;align-items:center}.chat img{width:55px;height:55px;border-radius:50%}.chat b{font-size:16px}.chat .m{font-size:12px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.badge{width:28px;height:28px;background:#ff7eb3;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-right:auto}#box{position:fixed;inset:0;background:#000;z-index:99;display:none;flex-direction:column}#box .bar{padding:12px;background:#1c1c22;display:flex;justify-content:space-between}#box iframe{flex:1;border:0;background:#fff}</style></head><body><div class="h"><h1>المحادثات</h1><div>🔍 ✏️</div></div><div style="text-align:center;color:#888;font-size:12px">موعد و تعارف • 12 متصل الآن</div><div class="st" id="st"></div><div id="list"></div><div id="box"><div class="bar"><span id="nm">Kamar</span><span onclick="document.getElementById('box').style.display='none'" style="background:#ff2a6d;padding:5px 12px;border-radius:20px">رجوع X</span></div><iframe src="https://tlk.io/chat-love-kamra"></iframe></div><script>const u=[{n:'Kamar',m:'مرحبا كيف حالك؟ 😊',t:'10:32',c:2,i:'https://i.pravatar.cc/150?img=5'},{n:'Zara',m:'أحب الصورة جميلة جدا ✨',t:'09:58',c:5,i:'https://i.pravatar.cc/150?img=9'},{n:'ليلى',m:'هل نلتقي للقهوة؟',t:'أمس',c:1,i:'https://i.pravatar.cc/150?img=8'},{n:'أميرة',m:'أرسلت لك الموقع 📍',t:'أمس',c:3,i:'https://i.pravatar.cc/150?img=23'},{n:'نور',m:'تمام أراك غدا!',t:'الثلاثاء',c:0,i:'https://i.pravatar.cc/150?img=10'},{n:'سارة',m:'شكرا لك نتكلم لاحقا 💕',t:'الثلاثاء',c:3,i:'https://i.pravatar.cc/150?img=16'}];let s=document.getElementById('st'),l=document.getElementById('list');u.forEach(x=>{s.innerHTML+=`<div class="s" onclick="openC('${x.n}')"><div class="r"><img src="${x.i}"></div><p>${x.n}</p></div>`;l.innerHTML+=`<div class="chat" onclick="openC('${x.n}')"><img src="${x.i}"><div><b>${x.n}</b><div class="m">${x.m}</div></div>${x.c?`<div class="badge">${x.c}</div>`:''}</div>`});function openC(n){document.getElementById('nm').innerText=n;document.getElementById('box').style.display='flex'}</script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat-Love ❤️</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.png">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-pink-50 to-red-100 min-h-screen">
+<div id="loginScreen" class="min-h-screen flex flex-col items-center justify-center p-6">
+<div class="bg-white rounded-[32px] shadow-2xl p-8 w-full max-w-sm">
+<div class="text-center mb-8">
+<div class="w-20 h-20 mx-auto bg-gradient-to-br from-pink-500 to-red-500 rounded-3xl flex items-center justify-center text-3xl">❤️</div>
+<h1 class="text-3xl font-bold mt-4 text-pink-600">Chat-Love</h1>
+<p class="text-gray-500 text-sm">Trouve l'amour près de toi</p>
+</div>
+<input id="nameInput" placeholder="Ton prénom" class="w-full p-4 rounded-2xl bg-gray-100 outline-none mb-3">
+<div class="flex gap-3 mb-4">
+<button onclick="setGender('homme')" id="btnH" class="flex-1 p-3 rounded-2xl border-2">👨 Homme</button>
+<button onclick="setGender('femme')" id="btnF" class="flex-1 p-3 rounded-2xl border-2">👩 Femme</button>
+</div>
+<input id="cityInput" placeholder="Ville (Marrakech)" class="w-full p-4 rounded-2xl bg-gray-100 outline-none mb-4">
+<button onclick="login()" class="w-full bg-gradient-to-r from-pink-500 to-red-500 text-white p-4 rounded-2xl font-bold">Commencer ❤️</button>
+</div>
+</div>
+<div id="appScreen" class="hidden h-screen flex flex-col">
+<div class="bg-white p-4 flex justify-between items-center shadow-sm">
+<h2 class="font-bold text-xl">Chat-Love ❤️</h2>
+<div class="flex gap-2">
+<button onclick="showTab('discover')" id="tabDiscover" class="px-4 py-2 rounded-full bg-pink-500 text-white text-sm">Découvrir</button>
+<button onclick="showTab('chats')" id="tabChats" class="px-4 py-2 rounded-full bg-gray-100 text-sm">Messages</button>
+</div>
+</div>
+<div id="discoverTab" class="flex-1 overflow-y-auto p-4"><div id="cardsContainer"></div></div>
+<div id="chatsTab" class="hidden flex-1 overflow-y-auto p-4"><div id="chatList"></div></div>
+</div>
+<div id="chatWindow" class="hidden fixed inset-0 bg-white z-50 flex flex-col">
+<div class="p-4 border-b flex items-center gap-3"><button onclick="closeChat()" class="w-9 h-9 rounded-full bg-gray-100">←</button><div id="chatWithName" class="font-bold"></div></div>
+<div id="messagesBox" class="flex-1 overflow-y-auto p-4 space-y-3 bg-pink-50"></div>
+<div class="p-3 border-t flex gap-2"><input id="msgInput" placeholder="Message..." class="flex-1 p-3 rounded-full bg-gray-100 outline-none"><button onclick="sendMsg()" class="w-12 h-12 rounded-full bg-pink-500 text-white">➤</button></div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, setDoc, getDocs, onSnapshot, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+const firebaseConfig = {
+apiKey: "AIzaSyBdPT-VStQgY6HfOwaa9w4AT1HlGmYfaso",
+authDomain: "chat-love-14788.firebaseapp.com",
+projectId: "chat-love-14788",
+storageBucket: "chat-love-14788.firebasestorage.app",
+messagingSenderId: "663137842500",
+appId: "1:663137842500:web:4f033c5be55b029a271311"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+let currentUser = JSON.parse(localStorage.getItem('chatlove_user')||'null');
+let gender = ''; let currentChatId = null;
+window.setGender = (g)=>{ gender=g; document.getElementById(g==='homme'?'btnH':'btnF').classList.add('bg-pink-500','text-white'); }
+if(currentUser){ document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('appScreen').classList.remove('hidden'); loadUsers(); loadChats(); }
+window.login = async ()=>{ const name=document.getElementById('nameInput').value.trim(); const city=document.getElementById('cityInput').value.trim()||'Marrakech'; if(!name||!gender)return alert('3amer smiya o jins!'); const userData={name,gender,city,createdAt:new Date()}; const docRef=await addDoc(collection(db,'users'),userData); userData.id=docRef.id; localStorage.setItem('chatlove_user',JSON.stringify(userData)); currentUser=userData; document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('appScreen').classList.remove('hidden'); loadUsers(); loadChats(); }
+async function loadUsers(){ onSnapshot(query(collection(db,'users')), (snap)=>{ const cont=document.getElementById('cardsContainer'); cont.innerHTML=''; snap.forEach(d=>{ const u=d.data(); const id=d.id; if(currentUser&&id===currentUser.id)return; const card=document.createElement('div'); card.className='bg-white rounded-2xl p-4 flex gap-3 items-center mb-3'; card.innerHTML=`<div class="w-12 h-12 rounded-full bg-pink-400 flex items-center justify-center text-white font-bold">${u.name[0]}</div><div class="flex-1"><div class="font-bold">${u.name}</div><div class="text-xs text-gray-500">${u.city}</div></div><button onclick="startChat('${id}','${u.name}')" class="px-4 py-2 rounded-full bg-pink-500 text-white text-sm">Chat</button>`; cont.appendChild(card); }); }); }
+window.showTab=(t)=>{ document.getElementById('discoverTab').classList.toggle('hidden',t!=='discover'); document.getElementById('chatsTab').classList.toggle('hidden',t!=='chats'); }
+window.startChat=async(otherId,otherName)=>{ const ids=[currentUser.id,otherId].sort(); currentChatId=ids.join('_'); document.getElementById('chatWithName').innerText=otherName; document.getElementById('chatWindow').classList.remove('hidden'); await setDoc(doc(db,'chats',currentChatId),{participants:ids,lastMsg:'',updatedAt:serverTimestamp()},{merge:true}); const q=query(collection(db,'chats',currentChatId,'messages'),orderBy('createdAt','asc')); onSnapshot(q,(snap)=>{ const box=document.getElementById('messagesBox'); box.innerHTML=''; snap.forEach(d=>{ const m=d.data(); const isMe=m.senderId===currentUser.id; const div=document.createElement('div'); div.className=isMe?'flex justify-end':'flex justify-start'; div.innerHTML=`<div class="${isMe?'bg-pink-500 text-white':'bg-white'} px-4 py-2 rounded-2xl max-w-[75%] text-sm">${m.text}</div>`; box.appendChild(div); }); box.scrollTop=box.scrollHeight; }); }
+window.closeChat=()=>{ document.getElementById('chatWindow').classList.add('hidden'); }
+window.sendMsg=async()=>{ const text=document.getElementById('msgInput').value.trim(); if(!text||!currentChatId)return; document.getElementById('msgInput').value=''; await addDoc(collection(db,'chats',currentChatId,'messages'),{text,senderId:currentUser.id,createdAt:serverTimestamp()}); await setDoc(doc(db,'chats',currentChatId),{lastMsg:text,updatedAt:serverTimestamp()},{merge:true}); }
+async function loadChats(){ if(!currentUser)return; onSnapshot(query(collection(db,'chats'),where('participants','array-contains',currentUser.id)),(snap)=>{ const list=document.getElementById('chatList'); list.innerHTML=''; snap.forEach(d=>{ const c=d.data(); const otherId=c.participants.find(id=>id!==currentUser.id); const div=document.createElement('div'); div.className='bg-white p-4 rounded-2xl mb-2 flex justify-between'; div.innerHTML=`<div><div class="font-bold text-sm">Chat</div><div class="text-xs text-gray-500">${c.lastMsg||'Nouveau'}</div></div><div class="text-pink-500">›</div>`; div.onclick=async()=>{ const usersSnap=await getDocs(collection(db,'users')); let otherName='Ami'; usersSnap.forEach(u=>{ if(u.id===otherId)otherName=u.data().name; }); startChat(otherId,otherName); }; list.appendChild(div); }); }); }
+</script>
+</body>
+</html>
