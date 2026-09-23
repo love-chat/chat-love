@@ -1,13 +1,30 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chat-Love</title>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chat-Love</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-</head><body>
+<style>
+body{font-family:system-ui;background:#fff0f5;margin:0;padding:15px}
+h2{text-align:center}
+input{width:100%;padding:12px;margin:5px 0;border-radius:10px;border:1px solid #ccc}
+button{background:#ff2a6d;color:#fff;border:0;padding:12px 20px;border-radius:10px;font-weight:bold}
+#box{background:#fff;height:400px;overflow:auto;padding:10px;border-radius:10px;margin-top:10px}
+.msg{padding:8px;border-bottom:1px solid #eee}
+</style>
+</head>
+<body>
+
 <h2>Chat-Love ❤️</h2>
-<input id="myName" placeholder="سميتك">
-<div id="grid"></div>
-<input id="txt" placeholder="كتب رسالة"><button onclick="send()">سيفط</button>
+<input id="myName" placeholder="سميتك - مثلا Ahmed 24">
+<div style="display:flex;gap:5px">
+<input id="txt" placeholder="كتب رسالة...">
+<button onclick="send()">سيفط</button>
+</div>
 <div id="box"></div>
+
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyBdPT-VStQgY6HfOwaa9w4AT1HlGmYfaso",
@@ -19,13 +36,25 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
 function send(){
   let t=document.getElementById('txt').value;
   let n=document.getElementById('myName').value||"مجهول";
+  if(!t) return;
   db.collection("chat").add({name:n,text:t,time:Date.now()});
+  document.getElementById('txt').value="";
 }
+
 db.collection("chat").orderBy("time").onSnapshot(s=>{
-  let h=""; s.forEach(d=>{h+=`<div><b>${d.data().name}:</b> ${d.data().text}</div>`});
-  document.getElementById('box').innerHTML=h;
+  let h="";
+  s.forEach(d=>{
+    let m=d.data();
+    h+=`<div class=msg><b>${m.name}:</b> ${m.text}</div>`;
+  });
+  let box=document.getElementById('box');
+  box.innerHTML=h;
+  box.scrollTop=box.scrollHeight;
 });
-</script></body></html>
+</script>
+</body>
+</html>
