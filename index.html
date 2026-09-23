@@ -1,29 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chat-Love</title>
+<title>Chat-Love ❤️ - جروب و بريفي</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <style>
-body{font-family:system-ui;background:#fff0f5;margin:0;padding:15px}
-h2{text-align:center}
-input{width:100%;padding:12px;margin:5px 0;border-radius:10px;border:1px solid #ccc}
-button{background:#ff2a6d;color:#fff;border:0;padding:12px 20px;border-radius:10px;font-weight:bold}
-#box{background:#fff;height:400px;overflow:auto;padding:10px;border-radius:10px;margin-top:10px}
-.msg{padding:8px;border-bottom:1px solid #eee}
+body{font-family:system-ui;background:#fff0f5;margin:0;display:flex;height:100vh}
+#left{width:35%;background:#fff;border-left:2px solid #ff2a6d;display:flex;flex-direction:column}
+#right{width:65%;display:flex;flex-direction:column;padding:10px}
+#topLeft{padding:12px;background:#ff2a6d;color:#fff;text-align:center;font-weight:bold}
+#userList{flex:1;overflow:auto}
+.user{padding:12px;border-bottom:1px solid #ffe0ea;cursor:pointer}
+.user:hover{background:#fff0f5}
+.user.active{background:#ff2a6d;color:#fff}
+#box{background:#fff;height:100%;overflow:auto;padding:10px;border-radius:10px;border:1px solid #ffd0de;flex:1}
+.msg{padding:8px;border-bottom:1px solid #f5f5f5}
+.msg.me{background:#ffe4ec;border-radius:10px}
+#tabs{display:flex;gap:5px;margin-bottom:10px}
+.tab{flex:1;padding:10px;text-align:center;border-radius:10px;background:#fff;border:1px solid #ff2a6d;cursor:pointer;font-weight:bold}
+.tab.active{background:#ff2a6d;color:#fff}
+input{width:100%;padding:12px;margin:5px 0;border-radius:10px;border:1px solid #ccc;box-sizing:border-box}
+button{background:#ff2a6d;color:#fff;border:0;padding:12px 20px;border-radius:10px;font-weight:bold;cursor:pointer;width:100%}
+#sendRow{display:flex;gap:5px;margin-top:10px}
+#sendRow input{flex:1}
+#sendRow button{width:90px}
 </style>
 </head>
 <body>
 
-<h2>Chat-Love ❤️</h2>
+<div id="left">
+<div id="topLeft">الناس أونلاين 🟢</div>
+<div id="userList">كاينين غير نتا دابا...</div>
+</div>
+
+<div id="right">
+<h2 style="margin:5px 0;text-align:center">Chat-Love ❤️</h2>
 <input id="myName" placeholder="سميتك - مثلا Ahmed 24">
-<div style="display:flex;gap:5px">
+<div id="tabs">
+<div class="tab active" id="tabGroup" onclick="switchMode('group')">💬 الجروب العام</div>
+<div class="tab" id="tabPrivate" onclick="switchMode('private')">🔒 البريفي</div>
+</div>
+<div id="chatTitle" style="font-weight:bold;margin:5px 0;">الجروب العام - كولشي كيهضر هنا</div>
+<div id="box"></div>
+<div id="sendRow">
 <input id="txt" placeholder="كتب رسالة...">
 <button onclick="send()">سيفط</button>
 </div>
-<div id="box"></div>
+</div>
 
 <script>
 const firebaseConfig = {
@@ -37,24 +62,110 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+let mode = "group";
+let selectedUser = null;
+let myNameCache = "";
+
+document.getElementById("myName").addEventListener("input",()=>{
+  myNameCache = document.getElementById("myName").value.trim();
+  if(myNameCache){
+    db.collection("online").doc(myNameCache).set({name:myNameCache,time:Date.now()});
+  }
+});
+
+function switchMode(m){
+  mode=m;
+  document.getElementById("tabGroup").classList.toggle("active",m==="group");
+  document.getElementById("tabPrivate").classList.toggle("active",m==="private");
+  if(m==="group"){
+    document.getElementById("chatTitle").textContent="الجروب العام - كولشي كيهضر هنا";
+    listenGroup();
+  }else{
+    if(!selectedUser){
+      document.getElementById("chatTitle").textContent="ختار شي واحد من الليست باش تهضر بريفي";
+      document.getElementById("box").innerHTML="<div style='padding:20px;text-align:center;color:#999'>ورك على سميت شي واحد فالليست على اليسار باش تبدا تهضر معاه بريفي</div>";
+    }else{
+      document.getElementById("chatTitle").textContent="بريفي مع "+selectedUser;
+      listenPrivate();
+    }
+  }
+}
+
 function send(){
-  let t=document.getElementById('txt').value;
-  let n=document.getElementById('myName').value||"مجهول";
+  let t=document.getElementById('txt').value.trim();
+  let n=document.getElementById('myName').value.trim()||"مجهول";
   if(!t) return;
-  db.collection("chat").add({name:n,text:t,time:Date.now()});
+  myNameCache=n;
+  db.collection("online").doc(n).set({name:n,time:Date.now()});
+  
+  if(mode==="group"){
+    db.collection("chat").add({name:n,text:t,time:Date.now()});
+  }else{
+    if(!selectedUser) return alert("ختار شكون بغيتي تهضر معاه من الليست!");
+    db.collection("private").add({from:n,to:selectedUser,text:t,time:Date.now()});
+  }
   document.getElementById('txt').value="";
 }
 
-db.collection("chat").orderBy("time").onSnapshot(s=>{
-  let h="";
-  s.forEach(d=>{
-    let m=d.data();
-    h+=`<div class=msg><b>${m.name}:</b> ${m.text}</div>`;
+function listenGroup(){
+  db.collection("chat").orderBy("time").onSnapshot(s=>{
+    if(mode!=="group") return;
+    let h="";
+    s.forEach(d=>{
+      let m=d.data();
+      let isMe = m.name===myNameCache;
+      h+=`<div class="msg ${isMe?'me':''}"><b>${m.name}:</b> ${m.text}</div>`;
+    });
+    let box=document.getElementById('box');
+    box.innerHTML=h;
+    box.scrollTop=box.scrollHeight;
   });
-  let box=document.getElementById('box');
-  box.innerHTML=h;
-  box.scrollTop=box.scrollHeight;
+}
+
+function listenPrivate(){
+  db.collection("private").orderBy("time").onSnapshot(s=>{
+    if(mode!=="private" || !selectedUser) return;
+    let h="";
+    s.forEach(d=>{
+      let m=d.data();
+      if((m.from===myNameCache && m.to===selectedUser) || (m.from===selectedUser && m.to===myNameCache)){
+        let isMe = m.from===myNameCache;
+        h+=`<div class="msg ${isMe?'me':''}"><b>${m.from}:</b> ${m.text}</div>`;
+      }
+    });
+    let box=document.getElementById('box');
+    box.innerHTML=h||"<div style='padding:20px;text-align:center;color:#999'>بدا الهضرة مع "+selectedUser+"</div>";
+    box.scrollTop=box.scrollHeight;
+  });
+}
+
+// Online users
+db.collection("online").onSnapshot(s=>{
+  let html="";
+  let count=0;
+  s.forEach(d=>{
+    let u=d.data();
+    if(u.name && u.name!==myNameCache){
+      count++;
+      html+=`<div class="user ${u.name===selectedUser?'active':''}" onclick="selectUser('${u.name}')">${u.name} 🟢</div>`;
+    }
+  });
+  if(count===0) html="<div style='padding:15px;color:#999'>ما كاين حد دابا...</div>";
+  document.getElementById("userList").innerHTML=html;
 });
+
+window.selectUser=(name)=>{
+  selectedUser=name;
+  mode="private";
+  document.getElementById("tabGroup").classList.remove("active");
+  document.getElementById("tabPrivate").classList.add("active");
+  document.getElementById("chatTitle").textContent="بريفي مع "+name;
+  listenPrivate();
+  // update active class
+  document.querySelectorAll(".user").forEach(el=>el.classList.remove("active"));
+}
+
+listenGroup();
 </script>
 </body>
 </html>
